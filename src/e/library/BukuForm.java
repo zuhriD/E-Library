@@ -1,0 +1,452 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package e.library;
+
+import java.awt.Image;
+import java.io.File;
+import com.mysql.jdbc.Connection;
+import com.mysql.jdbc.Statement;
+
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.plaf.basic.BasicInternalFrameUI;
+import javax.swing.table.DefaultTableModel;
+
+/**
+ *
+ * @author LENOVO
+ */
+public class BukuForm extends javax.swing.JInternalFrame {
+
+    /**
+     * Creates new form BukuForm
+     */
+      String  crudImageAbsolutePath = null;
+       String     crudImageName = null;
+      com.mysql.jdbc.Connection conn = null;
+    com.mysql.jdbc.Statement s = null;
+    public BukuForm() {
+        initComponents();
+        this.setBorder(javax.swing.BorderFactory.createEmptyBorder(0,0,0,0));
+        BasicInternalFrameUI bi = (BasicInternalFrameUI) this.getUI();
+        bi.setNorthPane(null);
+        autoNumber();
+        tampilKategori();
+        showData();
+        inisiasi();
+    }
+    private void inisiasi(){
+        txtjudulbuku.setText("");
+        txtpenerbit.setText("");
+        txtpengarang.setText("");
+        txttahunterbit.setText("");
+        btnedit.setEnabled(false);
+        btnhapus.setEnabled(false);
+        btnsimpan.setEnabled(true);
+        tempatFoto.setIcon(null);
+    }
+    public void editBtn(){
+           btnedit.setEnabled(true);
+        btnhapus.setEnabled(true);
+        btnsimpan.setEnabled(false);
+      }
+    private void tampilKategori(){
+        txtkategori.addItem("Umum");
+        txtkategori.addItem("Sains");
+        txtkategori.addItem("Religi");
+        txtkategori.addItem("Soshum");
+    }
+    private void autoNumber() {
+        String noBuku = "BOK000";
+        int i = 0;
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            conn = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/e_library","root","");
+            s = (Statement) conn.createStatement();
+            String sql = "select kode_buku from buku";
+            ResultSet rs = s.executeQuery(sql);
+            while(rs.next()){
+                noBuku = rs.getString("kode_buku");
+            }
+            noBuku = noBuku.substring(3);
+            i = Integer.parseInt(noBuku)+1;
+            noBuku = "00"+i;
+            noBuku = "BOK"+noBuku.substring(noBuku.length()-3);
+            txtkdbuku.setText(noBuku);
+        } catch (SQLException e) {
+            JOptionPane.showConfirmDialog(this, e);
+        } catch (ClassNotFoundException ex) {
+              Logger.getLogger(BukuForm.class.getName()).log(Level.SEVERE, null, ex);
+          }
+        
+    }
+    private void showData(){
+         DefaultTableModel model = new DefaultTableModel();
+         model.addColumn("Kode Buku");
+         model.addColumn("Judul Buku");
+         model.addColumn("Kategori");
+         model.addColumn("Penulis");
+         model.addColumn("Penerbit");
+         model.addColumn("Tahun Terbit");
+         model.addColumn("Status");
+          model.addColumn("Gambar");
+         model.addColumn("Gambar Path");
+         
+         try {
+            Class.forName("com.mysql.jdbc.Driver");
+            conn = (Connection)  DriverManager.getConnection("jdbc:mysql://localhost/e_library","root","");
+            s = (com.mysql.jdbc.Statement) conn.createStatement();
+            String sql = "select *from buku order by id_buku asc ";
+             ResultSet rs = s.executeQuery(sql);
+             
+             while (rs.next()) {                 
+                 model.addRow(new Object[]{
+                     rs.getString("kode_buku"),
+                     rs.getString("judul_buku"),
+                     rs.getString("kategori"),
+                     rs.getString("penulis"),
+                     rs.getString("penerbit"),
+                     rs.getString("thn_terbit"),
+                     rs.getString("status"),
+                      rs.getString("nama_image"),
+                     rs.getString("image_path")
+                 });
+             }
+             TBUKU.setModel(model);
+        } catch (Exception e) {
+            System.out.println("eror" + e.getMessage());
+            e.printStackTrace();
+        }
+         
+          try {
+            if (conn != null) {
+                conn.close();
+                s.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jPanel1 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        txtkdbuku = new javax.swing.JTextField();
+        txtjudulbuku = new javax.swing.JTextField();
+        txtpengarang = new javax.swing.JTextField();
+        txttahunterbit = new javax.swing.JTextField();
+        txtpenerbit = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        TBUKU = new javax.swing.JTable();
+        btnsimpan = new javax.swing.JButton();
+        btnedit = new javax.swing.JButton();
+        btnbatal = new javax.swing.JButton();
+        btnhapus = new javax.swing.JButton();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        tempatFoto = new javax.swing.JLabel();
+        btnFoto = new javax.swing.JButton();
+        txtkategori = new javax.swing.JComboBox<>();
+
+        setPreferredSize(new java.awt.Dimension(873, 612));
+
+        jPanel1.setBackground(new java.awt.Color(255, 102, 51));
+        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setText("KODE BUKU");
+        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 170, -1, -1));
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setText("JUDUL BUKU");
+        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 210, -1, -1));
+
+        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setText("PENULIS");
+        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 170, -1, -1));
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel6.setText("TAHUN TERBIT");
+        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 210, -1, -1));
+
+        jLabel8.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel8.setText("PENERBIT");
+        jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 250, -1, -1));
+
+        txtkdbuku.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(163, 87, 9)));
+        jPanel1.add(txtkdbuku, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 160, 150, 30));
+
+        txtjudulbuku.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(163, 87, 9)));
+        jPanel1.add(txtjudulbuku, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 210, 150, 30));
+
+        txtpengarang.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(163, 87, 9)));
+        jPanel1.add(txtpengarang, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 160, 125, 30));
+
+        txttahunterbit.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(163, 87, 9)));
+        jPanel1.add(txttahunterbit, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 200, 125, 30));
+
+        txtpenerbit.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(163, 87, 9)));
+        jPanel1.add(txtpenerbit, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 240, 124, 30));
+
+        TBUKU.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        TBUKU.setRowHeight(25);
+        TBUKU.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                TBUKUMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(TBUKU);
+
+        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 350, 800, 140));
+
+        btnsimpan.setBackground(new java.awt.Color(163, 87, 9));
+        btnsimpan.setFont(new java.awt.Font("Trebuchet MS", 0, 13)); // NOI18N
+        btnsimpan.setForeground(new java.awt.Color(255, 255, 255));
+        btnsimpan.setText("Simpan");
+        btnsimpan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnsimpanActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnsimpan, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 510, 130, 40));
+
+        btnedit.setBackground(new java.awt.Color(163, 87, 9));
+        btnedit.setFont(new java.awt.Font("Trebuchet MS", 0, 13)); // NOI18N
+        btnedit.setForeground(new java.awt.Color(255, 255, 255));
+        btnedit.setText("Edit");
+        btnedit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btneditActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnedit, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 510, 100, 40));
+
+        btnbatal.setBackground(new java.awt.Color(163, 87, 9));
+        btnbatal.setFont(new java.awt.Font("Trebuchet MS", 0, 13)); // NOI18N
+        btnbatal.setForeground(new java.awt.Color(255, 255, 255));
+        btnbatal.setText("BATAL");
+        btnbatal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnbatalActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnbatal, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 510, 120, 40));
+
+        btnhapus.setBackground(new java.awt.Color(163, 87, 9));
+        btnhapus.setFont(new java.awt.Font("Trebuchet MS", 0, 13)); // NOI18N
+        btnhapus.setForeground(new java.awt.Color(255, 255, 255));
+        btnhapus.setText("HAPUS");
+        btnhapus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnhapusActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnhapus, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 510, 120, 40));
+
+        jLabel13.setFont(new java.awt.Font("Trebuchet MS", 1, 36)); // NOI18N
+        jLabel13.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel13.setText("Data Buku");
+        jPanel1.add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 30, 180, -1));
+
+        jLabel14.setFont(new java.awt.Font("Trebuchet MS", 0, 16)); // NOI18N
+        jLabel14.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel14.setText("KATEGORI");
+        jPanel1.add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 250, 90, 20));
+
+        tempatFoto.setBackground(new java.awt.Color(204, 204, 204));
+        tempatFoto.setOpaque(true);
+        jPanel1.add(tempatFoto, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 30, 220, 260));
+
+        btnFoto.setBackground(new java.awt.Color(163, 87, 9));
+        btnFoto.setFont(new java.awt.Font("Trebuchet MS", 0, 13)); // NOI18N
+        btnFoto.setForeground(new java.awt.Color(255, 255, 255));
+        btnFoto.setText("CHOOSE PHOTO");
+        btnFoto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFotoActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnFoto, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 300, 130, 40));
+
+        jPanel1.add(txtkategori, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 250, 150, 30));
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 884, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 544, Short.MAX_VALUE)
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void btnsimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnsimpanActionPerformed
+        // TODO add your handling code here:
+        Buku b = new Buku(txtkdbuku.getText(), txtjudulbuku.getText(), txtpengarang.getText(), 
+                txtpenerbit.getText(), txttahunterbit.getText()
+                , txtkategori.getSelectedItem().toString(), crudImageName, crudImageAbsolutePath);
+        b.insert();
+        inisiasi();
+        autoNumber();
+        showData();
+    }//GEN-LAST:event_btnsimpanActionPerformed
+
+    private void btnFotoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFotoActionPerformed
+        // TODO add your handling code here:
+         try{
+           String currentDirectoryPath = "C:\\Users\\LENOVO\\Pictures";
+        JFileChooser imageFileChooser = new JFileChooser(currentDirectoryPath);
+        imageFileChooser.setDialogTitle("Choose Image");
+        
+        //selanjutnya, memilih salah satu gambar masi baru ngatur broswer
+        FileNameExtensionFilter imageFNEF = new FileNameExtensionFilter ("IMAGES","png","jpeg","jpg");
+        imageFileChooser.setFileFilter(imageFNEF);  
+        int imageChooser = imageFileChooser.showOpenDialog(null);
+        if(imageChooser == JFileChooser.APPROVE_OPTION){
+            
+            // memberi alamat image
+            File imageFile = imageFileChooser.getSelectedFile();
+            try {
+                Image images = ImageIO.read(imageFile);
+                crudImageAbsolutePath = imageFile.getAbsolutePath();
+            crudImageName = imageFile.getName();
+            
+            
+//            //menampilkan image di label
+            ImageIcon imageIcon = new ImageIcon(images);
+            tempatFoto.setIcon(imageIcon);
+//            //resize Image to Fit JLabel;
+            Image imageResize = imageIcon.getImage().getScaledInstance(tempatFoto.getWidth(), tempatFoto.getHeight(), Image.SCALE_SMOOTH);
+            tempatFoto.setIcon(new ImageIcon(imageResize));
+            } catch (Exception e) {
+            }
+            
+        }
+      }
+      catch(Exception e){
+          
+      }
+    }//GEN-LAST:event_btnFotoActionPerformed
+
+    private void btnbatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnbatalActionPerformed
+        // TODO add your handling code here:
+        inisiasi();
+        autoNumber();
+    }//GEN-LAST:event_btnbatalActionPerformed
+
+    private void TBUKUMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TBUKUMouseClicked
+        // TODO add your handling code here:
+         int baris = TBUKU.rowAtPoint(evt.getPoint());
+        String id = TBUKU.getValueAt(baris, 0).toString();
+        this.txtkdbuku.setText(id);
+        
+        String judul = TBUKU.getValueAt(baris, 1).toString();
+        txtjudulbuku.setText(judul);
+        String kategori = TBUKU.getValueAt(baris, 2).toString();
+        txtkategori.setSelectedItem(kategori);
+        String penulis = TBUKU.getValueAt(baris, 3).toString();
+        txtpengarang.setText(penulis);
+        String penerbit = TBUKU.getValueAt(baris, 4).toString();
+        txtpenerbit.setText(penerbit);
+        String tahun = TBUKU.getValueAt(baris, 5).toString();
+        txttahunterbit.setText(tahun);
+        
+        String namaI = TBUKU.getValueAt(baris, 6).toString();
+        String namaP = TBUKU.getValueAt(baris, 7).toString();
+           //menampilkan image di label
+            ImageIcon imageIcon = new ImageIcon(namaP);
+            tempatFoto.setIcon(imageIcon);
+//            //resize Image to Fit JLabel;
+            Image imageResize = imageIcon.getImage().getScaledInstance(tempatFoto.getWidth(), tempatFoto.getHeight(), Image.SCALE_SMOOTH);
+            tempatFoto.setIcon(new ImageIcon(imageResize));
+        editBtn();
+    }//GEN-LAST:event_TBUKUMouseClicked
+
+    private void btneditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btneditActionPerformed
+        // TODO add your handling code here:
+        Buku b = new Buku(txtkdbuku.getText(), txtjudulbuku.getText(), txtpengarang.getText(), txtpenerbit.getText(), txttahunterbit.getText()
+                , txtkategori.getSelectedItem().toString(), crudImageName, crudImageAbsolutePath);
+        b.update();
+        inisiasi();
+        autoNumber();
+        showData();
+    }//GEN-LAST:event_btneditActionPerformed
+
+    private void btnhapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnhapusActionPerformed
+        // TODO add your handling code here:
+         Buku b = new Buku(txtkdbuku.getText(), txtjudulbuku.getText(), txtpengarang.getText(), txtpenerbit.getText(), txttahunterbit.getText()
+                , txtkategori.getSelectedItem().toString(), crudImageName, crudImageAbsolutePath);
+        b.delete();
+        inisiasi();
+        autoNumber();
+        showData();
+    }//GEN-LAST:event_btnhapusActionPerformed
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable TBUKU;
+    private javax.swing.JButton btnFoto;
+    private javax.swing.JButton btnbatal;
+    private javax.swing.JButton btnedit;
+    private javax.swing.JButton btnhapus;
+    private javax.swing.JButton btnsimpan;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel tempatFoto;
+    private javax.swing.JTextField txtjudulbuku;
+    private javax.swing.JComboBox<String> txtkategori;
+    private javax.swing.JTextField txtkdbuku;
+    private javax.swing.JTextField txtpenerbit;
+    private javax.swing.JTextField txtpengarang;
+    private javax.swing.JTextField txttahunterbit;
+    // End of variables declaration//GEN-END:variables
+}
